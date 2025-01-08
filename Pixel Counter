@@ -1,0 +1,79 @@
+# -*- coding: utf-8 -*-
+"""
+This is a program to:
+1. Count pixels in images above a specified brightness tolerance.
+- The program works by analyzing each image in the designated folder, identifying pixels with values above a specified tolerance.
+- It counts the number of pixels above the tolerance threshold for each image, which is useful for analyzing cell intensity or other features in image-based data.
+
+2. Export the pixel count results to an Excel file.
+- The program writes the results to an Excel file, where each row corresponds to an image and the count of pixels above the tolerance is recorded.
+
+Requirements:
+1. Store all images in a single folder, with each image named according to a consistent convention (e.g., 'ch00', 'ch01', 'ch02', etc.) and placed in the working directory specified in the program.
+2. Save this program in a separate directory from the images. Set the working directory within the code to ensure proper file access.
+3. The images should be in TIFF format or other compatible formats readable by PIL.
+
+Note:
+- The program filters files by the channel identifier (e.g., 'ch00') and counts the pixels above the brightness threshold defined by the `tolerance` variable.
+- Results are saved in an Excel file, where the file names and pixel counts are logged for easy analysis.
+
+@author: stock
+"""
+
+from PIL import Image
+import numpy as np
+import os
+import xlsxwriter
+
+# Set the directory containing image files
+wdir = r'C:\Users\stock\OneDrive - Leland Stanford Junior University\Desktop\test'
+# Tolerance for brightness; pixels dimmer than this will not be counted
+tolerance = 10
+
+# Change working directory to the specified path
+os.chdir(wdir)
+
+# Filter to only process files with the specific channel (e.g., 'ch00')
+channel_filter = 'ch00'
+
+# Initialize list to store file names and results
+DataOfInterest = []
+
+# Loop through each file in the directory that matches the filter
+for root, dirs, files in os.walk("."):
+    # Filter files based on the channel filter
+    files = [f for f in files if channel_filter in f]
+
+    # Process each file
+    for count, file in enumerate(files):
+        # Open the image and convert to a NumPy array
+        im = Image.open(file)
+        imarray = np.array(im)
+
+        # Flatten the image array into a 1D array for easy processing
+        imarray = np.squeeze(imarray.reshape(1, -1))
+
+        # Identify pixels above the tolerance threshold
+        pixels_above_tolerance = np.greater(imarray, tolerance)
+        
+        # Count the pixels above tolerance and store the result
+        count_above_tolerance = np.sum(pixels_above_tolerance)
+        DataOfInterest.append((file, count_above_tolerance))
+
+# Set up Excel export
+output_file = 'Pixel_Counts_Above_Tolerance.xlsx'
+workbook = xlsxwriter.Workbook(output_file)
+worksheet = workbook.add_worksheet("Results")
+
+# Write headers to Excel
+worksheet.write(0, 0, "File Name")
+worksheet.write(0, 1, "Number of Pixels Above Tolerance")
+
+# Populate Excel with file names and corresponding pixel counts
+for row_num, (file_name, pixel_count) in enumerate(DataOfInterest, start=1):
+    worksheet.write(row_num, 0, file_name)
+    worksheet.write(row_num, 1, pixel_count)
+
+# Close the workbook to save the file
+workbook.close()
+ 
