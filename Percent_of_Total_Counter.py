@@ -1,7 +1,32 @@
 # -*- coding: utf-8 -*-
 """
 Created on Tue May 21 13:46:40 2024
+This program analyzes z-stack images to:
+1. Calculate the percentage of pixels in one mask (numerator) that overlap with another mask (denominator) for specified channels.
+2. Process and filter images to generate binary masks for analysis, ensuring consistent data quality by removing noise and small artifacts.
+3. Export results to an Excel file with detailed percentages and total pixel counts for each genotype analyzed.
 
+Requirements:
+1. Input images should be stored in a single directory, organized by genotype and channel with a consistent naming convention (e.g., genotype_ch00, genotype_ch01, etc.).
+2. The program must be run from a directory different from the image folder. Set the working directory to the images folder using user input.
+3. Install the following libraries: numpy, scipy, cv2, pandas, and matplotlib.
+
+Workflow:
+1. The user specifies the folder location, genotypes, and channels to analyze, along with antibody information for the selected channels.
+2. For each genotype and z-stack:
+   - Images are processed into binary masks, with options for noise filtering and small object removal.
+   - Pixel counts are calculated for both the numerator and denominator masks.
+   - The percentage of overlap is computed and stored for each z-stack.
+3. The results are summarized and exported to an Excel file, including a breakdown of total pixel counts per genotype.
+
+Image Processing Functions:
+1. `filter_mask`: Prepares binary masks by thresholding and morphological operations.
+2. `remove_small_objects`: Eliminates noise by removing objects below a specified size threshold.
+3. `display_every_10`: Visualizes masks for quality control at specified z-stack intervals.
+
+Data Output:
+1. Percentages of overlap for each genotype and z-stack.
+2. Total pixel counts for each channel and genotype.
 @author: Courtney
 """
 #Import Packages:
