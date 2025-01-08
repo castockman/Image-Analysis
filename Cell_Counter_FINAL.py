@@ -2,6 +2,28 @@
 """
 Created on Tue May 21 13:46:40 2024
 
+This program processes microscopy images to:
+1. Count the number of cells stained with different antibodies across multiple channels (e.g., nuclear, cytoplasmic markers).
+2. Generate cell counts for each channel and specific combinations of channels (e.g., Ch1 and Ch2 overlap).
+3. Export the results to an Excel file with separate sheets for each channel and channel combination.
+
+Requirements:
+1. Organize images in a single folder, with filenames indicating genotype, image set, and channel (e.g., "genotype1_imageSet1_ch00").
+2. Install required libraries: numpy, pandas, matplotlib, cv2, skimage, and scipy.
+3. Run this program in a directory separate from the image folder, setting the working directory via user input.
+
+Workflow:
+1. The user specifies the folder location, genotypes, channels to analyze, and antibody stain descriptions.
+2. For each genotype and image set:
+   - Masks are generated for different compartments (e.g., nuclear or cytoplasmic regions).
+   - Cells are counted based on processed masks, optionally visualized for verification.
+3. Cell counts are saved into an Excel file with separate sheets for each analyzed channel or channel combination.
+
+Additional Notes:
+- Functions include utilities to filter and refine masks, count labeled objects, and visualize results.
+- Robust preprocessing steps are applied to improve mask quality, such as adaptive histogram equalization and watershed segmentation.
+- Large and small noise objects are removed to enhance segmentation accuracy.
+
 @author: Courtney
 """
 import numpy as np
